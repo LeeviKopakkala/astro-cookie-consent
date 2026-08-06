@@ -1,2 +1,8 @@
-export { getConsent, setConsent, onConsentChange, whenAccepted } from './consent.js';
+export {
+	getConsent,
+	getConsentRecord,
+	setConsent,
+	onConsentChange,
+	whenAccepted,
+} from './consent.js';
 export { gateScript } from './gateScript.js';

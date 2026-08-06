@@ -5,8 +5,11 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="astro-cookie-consent demo">
 	<h1>astro-cookie-consent demo</h1>
 	<p>
-		This page renders <code>&lt;ConsentBanner /&gt;</code> and gates a demo script behind consent using
-		<code>gateScript()</code>. Accept or decline in the banner at the bottom to see it react.
+		This page renders <code>&lt;ConsentBanner /&gt;</code> with per-category consent (Analytics/Marketing)
+		and gates a demo script behind the <code>analytics</code> category using <code
+			>gateScript()</code
+		>. Toggle Analytics in the banner at the bottom (or use "Accept all"/"Decline all") to see it
+		react.
 	</p>
 
 	<p id="demo-status">Waiting for consent…</p>
@@ -16,9 +19,9 @@ import Layout from '../layouts/Layout.astro';
 
 	<script>
 		import { gateScript, onConsentChange, getConsent } from 'astro-cookie-consent';
-		import type { ConsentValue } from 'astro-cookie-consent';
+		import type { ConsentValue, ConsentRecord } from 'astro-cookie-consent';
 
-		gateScript({ src: '/demo-script.js' });
+		gateScript({ src: '/demo-script.js', category: 'analytics' });
 
 		const status = document.getElementById('demo-status');
 		const render = (value: ConsentValue | null) => {
@@ -28,7 +31,10 @@ import Layout from '../layouts/Layout.astro';
 			else status.textContent = 'Waiting for consent…';
 		};
 
-		render(getConsent());
-		onConsentChange(render);
+		render(getConsent('analytics'));
+		onConsentChange((record: ConsentRecord) => {
+			if ('analytics' in record.categories)
+				render(record.categories.analytics ? 'accept' : 'decline');
+		});
 	</script>
 </Layout>

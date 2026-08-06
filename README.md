@@ -4,6 +4,10 @@ A tiny, dependency-free cookie consent banner and script-gating helper for Astro
 
 - No dependencies, no build step — ships as plain `.astro`/`.js` source, compiled by your own project's Astro pipeline.
 - Blocks third-party scripts until the visitor actually accepts (not just an informational banner).
+- Optional per-category consent (e.g. analytics/marketing), or a single accept/decline if you don't need that.
+- Accept and decline are given equal visual weight — no dark-pattern nudging toward accept.
+- Choices expire after `expiryDays` (default 365) and the banner is shown again — no permanent silent consent.
+- The stored record includes a timestamp, so you have something to point to if you ever need to demonstrate consent was given.
 - Choice persists in `localStorage` and is broadcast via a `CustomEvent`, so any part of your site can react to it.
 - Themeable via CSS custom properties, all copy is prop-driven (no hardcoded language).
 
@@ -45,20 +49,48 @@ Gate any third-party script behind that consent:
 
 See `examples/basic` for a full working demo (`npm install && npm run dev` from the repo root).
 
+## Per-category consent
+
+Pass `categories` to switch the banner from a single accept/decline into a checklist, with
+"Accept all" / "Decline all" / "Save preferences" actions:
+
+```astro
+<ConsentBanner
+	categories={[
+		{ id: 'analytics', label: 'Analytics', description: 'Helps us understand site usage.' },
+		{ id: 'marketing', label: 'Marketing', description: 'Used for ad personalization.' },
+	]}
+/>
+```
+
+Gate a script behind a specific category (defaults to `'all'`, which is what's used when you
+don't pass `categories`):
+
+```js
+gateScript({ src: 'https://example.com/analytics.js', category: 'analytics' });
+```
+
+`getConsent()`, `whenAccepted()`, and `setConsent()` all take the same `category` argument —
+see the JS API below.
+
 ## `<ConsentBanner />` props
 
 All optional — defaults are in English, override everything to localize.
 
-| Prop               | Default                                                                        | Description                                           |
-| ------------------ | ------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| `message`          | `"We use cookies to enhance your experience. You can accept or decline them."` | Banner body text.                                     |
-| `acceptLabel`      | `"Accept"`                                                                     | Accept button label.                                  |
-| `declineLabel`     | `"Decline"`                                                                    | Decline button label.                                 |
-| `privacyHref`      | _(none)_                                                                       | If set, renders a link to your privacy policy.        |
-| `privacyLabel`     | `"privacy policy"`                                                             | Link text for `privacyHref`.                          |
-| `showReopenButton` | `true`                                                                         | Show a small persistent button to revisit the choice. |
-| `reopenLabel`      | `"Cookie settings"`                                                            | Reopen button label.                                  |
-| `reopenAriaLabel`  | `"Change cookie preferences"`                                                  | Reopen button `aria-label`.                           |
+| Prop               | Default                                                                        | Description                                                               |
+| ------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `title`            | `"We value your privacy"`                                                      | Banner heading. Pass `""` to omit it.                                     |
+| `message`          | `"We use cookies to enhance your experience. You can accept or decline them."` | Banner body text.                                                         |
+| `acceptLabel`      | `"Accept"` (or `"Accept all"` with `categories`)                               | Accept button label.                                                      |
+| `declineLabel`     | `"Decline"` (or `"Decline all"` with `categories`)                             | Decline button label.                                                     |
+| `saveLabel`        | `"Save preferences"`                                                           | "Save" button label, only shown when `categories` is set.                 |
+| `privacyHref`      | _(none)_                                                                       | If set, renders a link to your privacy policy.                            |
+| `privacyLabel`     | `"privacy policy"`                                                             | Link text for `privacyHref`.                                              |
+| `showReopenButton` | `true`                                                                         | Show a small persistent button to revisit the choice.                     |
+| `reopenLabel`      | `"Cookie settings"`                                                            | Reopen button label.                                                      |
+| `reopenAriaLabel`  | `"Change cookie preferences"`                                                  | Reopen button `aria-label`.                                               |
+| `categories`       | _(none)_                                                                       | `{ id, label, description?, default? }[]` — enables per-category consent. |
+| `expiryDays`       | `365`                                                                          | Days a stored choice stays valid before the banner reappears.             |
 
 ## Theming
 
@@ -71,22 +103,53 @@ Override these CSS custom properties anywhere above the banner in the DOM (e.g. 
 	--cc-accent: #4f46e5;
 	--cc-accent-fg: #fff;
 	--cc-border: rgba(255, 255, 255, 0.15);
-	--cc-radius: 4px;
+	--cc-radius: 14px;
 	--cc-font: system-ui, sans-serif;
 }
 ```
 
+### Light/dark mode
+
+If you don't set `--cc-bg`/`--cc-fg`/`--cc-border` yourself, the banner already follows the
+visitor's OS color scheme automatically (dark by default, switching to light under
+`prefers-color-scheme: light`). To force one theme regardless of OS preference — e.g. your
+site has its own light/dark toggle — set `data-theme="light"` or `data-theme="dark"` on
+`<html>`:
+
+```js
+document.documentElement.dataset.theme = 'light'; // or 'dark'
+```
+
+Setting any of the 7 variables above yourself always takes precedence over both of these,
+in any theme.
+
 ## JS API
 
 ```js
-import { getConsent, setConsent, onConsentChange, whenAccepted, gateScript } from 'astro-cookie-consent';
+import {
+	getConsent,
+	getConsentRecord,
+	setConsent,
+	onConsentChange,
+	whenAccepted,
+	gateScript,
+} from 'astro-cookie-consent';
 
-getConsent(); // 'accept' | 'decline' | null
+getConsent(); // 'accept' | 'decline' | null — reads the 'all' category
+getConsent('analytics'); // 'accept' | 'decline' | null for a specific category
+getConsentRecord(); // { categories: {...}, timestamp } | null — the raw stored record, or null if expired/unset
 setConsent('accept'); // sets it programmatically and broadcasts the change
-onConsentChange((value) => { ... }); // fires on every future change
+setConsent({ analytics: true, marketing: false }); // per-category form
+onConsentChange((record) => { ... }); // fires on every future change with the full record
 whenAccepted(() => { ... }); // fires immediately if already accepted, or once accepted
+whenAccepted(() => { ... }, 'analytics'); // same, scoped to one category
 gateScript({ src: '...', onLoad: () => { ... } }); // load a script only after consent
+gateScript({ src: '...', category: 'analytics' }); // same, scoped to one category
 ```
+
+A stored choice expires after `expiryDays` (default 365, configurable via the `expiryDays`
+prop/option) — after that, `getConsent()`/`getConsentRecord()` return `null` again and the
+banner reappears on next load.
 
 ## Using with AI coding agents
 
@@ -109,9 +172,10 @@ tool doesn't use the `.claude/skills` convention.
 
 ## Design notes
 
-- `ConsentBanner.astro` embeds its own copy of the consent read/write logic in an `is:inline` script rather than importing `consent.js`, so it can decide what to show before first paint with zero flash — a processed `<script type="module">` is deferred by the browser and can't guarantee that. Both halves agree on the same `localStorage` key and event name, so they interoperate correctly even though they don't share a JS module at runtime.
-- This is a single accept/decline model, not a multi-category (necessary/analytics/marketing) consent manager. If you need per-category consent, this package isn't (yet) the right fit.
-- This library provides the mechanism, not legal advice — you're responsible for what your privacy policy says and for gating the right things behind it.
+- `ConsentBanner.astro` embeds its own copy of the consent read/write logic in an `is:inline` script rather than importing `consent.js`, so it can decide what to show before first paint with zero flash — a processed `<script type="module">` is deferred by the browser and can't guarantee that. Both halves agree on the same `localStorage` record shape and event name, so they interoperate correctly even though they don't share a JS module at runtime.
+- Wherever you render `<ConsentBanner />` in your markup, it moves itself to be a direct child of `<body>` on init. This is deliberate: `position: fixed` is trapped by any ancestor with `isolation`, `transform`, `filter`, or `will-change` (common in real layouts — e.g. Tailwind's `isolate` utility, or a framework's page-transition wrapper), which silently breaks its stacking no matter how high `z-index` is set. A consent banner has to always be reachable, so it always escapes to `<body>` rather than trusting z-index alone.
+- "Necessary" cookies (ones that don't legally require consent) aren't a category here — just load those directly, without `gateScript()`. `categories` is only for things that genuinely need a yes/no.
+- This library provides the mechanism, not legal advice — you're responsible for what your privacy policy actually says, which categories/purposes you declare, and for gating the right things behind the right category.
 
 ## License
 

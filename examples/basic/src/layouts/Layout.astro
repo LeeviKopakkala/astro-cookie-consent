@@ -21,6 +21,14 @@ const { title } = Astro.props;
 			message="We use cookies to run a demo script below. You can accept or decline."
 			privacyHref="#privacy"
 			privacyLabel="learn more"
+			categories={[
+				{ id: 'analytics', label: 'Analytics', description: 'Used to run the demo script below.' },
+				{
+					id: 'marketing',
+					label: 'Marketing',
+					description: 'Not used by this demo — shown to illustrate multiple categories.',
+				},
+			]}
 		/>
 	</body>
 </html>
