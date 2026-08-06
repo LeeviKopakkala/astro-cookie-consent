@@ -1,0 +1,20 @@
+{
+	"name": "astro-cookie-consent-example",
+	"private": true,
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"check": "astro check"
+	},
+	"dependencies": {
+		"astro": "^7.1.6",
+		"astro-cookie-consent": "file:../.."
+	},
+	"devDependencies": {
+		"@astrojs/check": "^0.9.10",
+		"typescript": "^6.0.3"
+	}
+}

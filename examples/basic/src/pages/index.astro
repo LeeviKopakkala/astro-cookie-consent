@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="astro-cookie-consent demo">
+	<h1>astro-cookie-consent demo</h1>
+	<p>
+		This page renders <code>&lt;ConsentBanner /&gt;</code> and gates a demo script behind consent using
+		<code>gateScript()</code>. Accept or decline in the banner at the bottom to see it react.
+	</p>
+
+	<p id="demo-status">Waiting for consent…</p>
+
+	<h2 id="privacy">Example privacy note</h2>
+	<p>This is just a demo anchor target for the banner's "learn more" link.</p>
+
+	<script>
+		import { gateScript, onConsentChange, getConsent } from 'astro-cookie-consent';
+		import type { ConsentValue } from 'astro-cookie-consent';
+
+		gateScript({ src: '/demo-script.js' });
+
+		const status = document.getElementById('demo-status');
+		const render = (value: ConsentValue | null) => {
+			if (!status) return;
+			if (value === 'accept') return; // demo-script.js will overwrite this itself
+			if (value === 'decline') status.textContent = '🚫 Declined — demo script will not load.';
+			else status.textContent = 'Waiting for consent…';
+		};
+
+		render(getConsent());
+		onConsentChange(render);
+	</script>
+</Layout>

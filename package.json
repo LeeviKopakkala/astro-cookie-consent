@@ -1,0 +1,52 @@
+{
+	"name": "astro-cookie-consent",
+	"version": "0.1.0",
+	"description": "A tiny, dependency-free cookie consent banner and script-gating helper for Astro sites.",
+	"type": "module",
+	"license": "MIT",
+	"author": "Leevi Kopakkala",
+	"homepage": "https://github.com/LeeviKopakkala/astro-cookie-consent",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/LeeviKopakkala/astro-cookie-consent.git"
+	},
+	"keywords": [
+		"astro",
+		"astro-component",
+		"cookie-consent",
+		"gdpr",
+		"privacy",
+		"cookies"
+	],
+	"files": [
+		"src",
+		"SKILL.md"
+	],
+	"exports": {
+		".": {
+			"types": "./src/index.d.ts",
+			"default": "./src/index.js"
+		},
+		"./ConsentBanner.astro": "./src/ConsentBanner.astro",
+		"./consent.js": "./src/consent.js",
+		"./gateScript.js": "./src/gateScript.js",
+		"./package.json": "./package.json"
+	},
+	"peerDependencies": {
+		"astro": ">=4.0.0"
+	},
+	"scripts": {
+		"dev": "npm run dev --workspace examples/basic",
+		"build": "npm run build --workspace examples/basic",
+		"check": "npm run check --workspace examples/basic",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
+	},
+	"devDependencies": {
+		"prettier": "^3.9.6",
+		"prettier-plugin-astro": "^0.14.1"
+	},
+	"workspaces": [
+		"examples/basic"
+	]
+}

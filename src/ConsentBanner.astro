@@ -1,0 +1,218 @@
+---
+export interface Props {
+	/** Main banner text. */
+	message?: string;
+	/** Accept button label. */
+	acceptLabel?: string;
+	/** Decline button label. */
+	declineLabel?: string;
+	/** If set, renders a link to your privacy policy after the message. */
+	privacyHref?: string;
+	/** Link text for the privacy policy link. */
+	privacyLabel?: string;
+	/** Show a small persistent button to reopen the banner and change the choice later. */
+	showReopenButton?: boolean;
+	/** Reopen button label. */
+	reopenLabel?: string;
+	/** Reopen button aria-label. */
+	reopenAriaLabel?: string;
+}
+
+const {
+	message = 'We use cookies to enhance your experience. You can accept or decline them.',
+	acceptLabel = 'Accept',
+	declineLabel = 'Decline',
+	privacyHref,
+	privacyLabel = 'privacy policy',
+	showReopenButton = true,
+	reopenLabel = 'Cookie settings',
+	reopenAriaLabel = 'Change cookie preferences',
+} = Astro.props;
+---
+
+<div id="cookie-consent-banner" class="cc-banner" hidden>
+	<p>
+		{message}
+		{
+			privacyHref && (
+				<>
+					{' '}
+					<a href={privacyHref}>{privacyLabel}</a>.
+				</>
+			)
+		}
+	</p>
+	<div class="cc-actions">
+		<button type="button" data-cc-choice="decline" class="cc-decline">{declineLabel}</button>
+		<button type="button" data-cc-choice="accept" class="cc-accept">{acceptLabel}</button>
+	</div>
+</div>
+
+{
+	showReopenButton && (
+		<button
+			type="button"
+			id="cookie-consent-reopen"
+			class="cc-reopen"
+			hidden
+			aria-label={reopenAriaLabel}
+		>
+			{reopenLabel}
+		</button>
+	)
+}
+
+<script is:inline>
+	(() => {
+		const STORAGE_KEY = 'cookie-consent';
+		const EVENT_NAME = 'cookie-consent-changed';
+		const banner = document.getElementById('cookie-consent-banner');
+		const reopenBtn = document.getElementById('cookie-consent-reopen');
+		if (!banner) return;
+
+		const getStored = () => {
+			try {
+				return localStorage.getItem(STORAGE_KEY);
+			} catch {
+				return null;
+			}
+		};
+
+		const setStored = (value) => {
+			try {
+				localStorage.setItem(STORAGE_KEY, value);
+			} catch {
+				/* localStorage unavailable — consent just won't persist */
+			}
+		};
+
+		const dispatchChange = (value) => {
+			window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: { value } }));
+		};
+
+		const showBanner = () => {
+			banner.hidden = false;
+			if (reopenBtn) reopenBtn.hidden = true;
+		};
+
+		const showReopen = () => {
+			banner.hidden = true;
+			if (reopenBtn) reopenBtn.hidden = false;
+		};
+
+		const applyChoice = (value) => {
+			setStored(value);
+			showReopen();
+			dispatchChange(value);
+		};
+
+		banner.addEventListener('click', (event) => {
+			const target = event.target;
+			if (!(target instanceof HTMLElement)) return;
+			const choice = target.dataset.ccChoice;
+			if (choice === 'accept' || choice === 'decline') applyChoice(choice);
+		});
+
+		reopenBtn?.addEventListener('click', showBanner);
+
+		const stored = getStored();
+		if (stored === 'accept' || stored === 'decline') {
+			showReopen();
+			dispatchChange(stored);
+		} else {
+			showBanner();
+		}
+	})();
+</script>
+
+<style>
+	.cc-banner {
+		position: fixed;
+		left: 1rem;
+		right: 1rem;
+		bottom: 1rem;
+		z-index: 100;
+		max-width: 640px;
+		margin: 0 auto;
+		background-color: var(--cc-bg, #1f1f1f);
+		color: var(--cc-fg, #f5f5f5);
+		border: 1px solid var(--cc-border, rgba(255, 255, 255, 0.15));
+		border-radius: var(--cc-radius, 4px);
+		padding: 1.25rem 1.5rem;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+		font-family: var(--cc-font, system-ui, sans-serif);
+	}
+
+	.cc-banner p {
+		margin: 0 0 1rem;
+		font-size: 0.9rem;
+		line-height: 1.6;
+	}
+
+	.cc-banner a {
+		color: inherit;
+		text-decoration: underline;
+	}
+
+	.cc-actions {
+		display: flex;
+		gap: 0.75rem;
+		justify-content: flex-end;
+	}
+
+	.cc-actions button {
+		font: inherit;
+		font-size: 0.8rem;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		padding: 0.6rem 1.25rem;
+		border: 1px solid currentColor;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+		border-radius: var(--cc-radius, 4px);
+	}
+
+	.cc-accept {
+		background-color: var(--cc-accent, #4f46e5) !important;
+		border-color: var(--cc-accent, #4f46e5) !important;
+		color: var(--cc-accent-fg, #fff) !important;
+	}
+
+	.cc-reopen {
+		position: fixed;
+		left: 1rem;
+		bottom: 1rem;
+		z-index: 100;
+		background-color: var(--cc-bg, #1f1f1f);
+		color: var(--cc-fg, #f5f5f5);
+		border: 1px solid var(--cc-border, rgba(255, 255, 255, 0.3));
+		border-radius: 999px;
+		font-size: 0.75rem;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+		opacity: 0.85;
+		font-family: var(--cc-font, system-ui, sans-serif);
+	}
+
+	.cc-reopen:hover {
+		opacity: 1;
+	}
+
+	@media (max-width: 640px) {
+		.cc-banner {
+			left: 0.5rem;
+			right: 0.5rem;
+			bottom: 0.5rem;
+			padding: 1rem;
+		}
+
+		.cc-actions {
+			justify-content: stretch;
+		}
+
+		.cc-actions button {
+			flex: 1;
+		}
+	}
+</style>

@@ -1,0 +1,40 @@
+---
+import ConsentBanner from 'astro-cookie-consent/ConsentBanner.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+		<ConsentBanner
+			message="We use cookies to run a demo script below. You can accept or decline."
+			privacyHref="#privacy"
+			privacyLabel="learn more"
+		/>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--cc-accent: #4f46e5;
+	}
+
+	body {
+		font-family: system-ui, sans-serif;
+		max-width: 640px;
+		margin: 4rem auto;
+		padding: 0 1.5rem;
+		line-height: 1.6;
+	}
+</style>
