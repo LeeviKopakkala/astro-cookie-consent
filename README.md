@@ -6,6 +6,8 @@
 
 I love Astro.build and vibe-coding websites but let's make sure that you are actually GDPR compliant.
 
+- This package also ships with a SKILL.md file for all your AI needs! :)
+
 A tiny, dependency-free, GDPR compliant cookie consent banner and script-gating helper for Astro
 sites.
 
