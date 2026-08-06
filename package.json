@@ -6,7 +6,7 @@
 	"types": "./src/index.d.ts",
 	"license": "MIT",
 	"author": "Leevi Kopakkala",
-	"homepage": "https://github.com/LeeviKopakkala/astro-cookie-consent",
+	"homepage": "https://astro-cookie-consent.dev",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/LeeviKopakkala/astro-cookie-consent.git"
