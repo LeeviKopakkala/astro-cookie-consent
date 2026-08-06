@@ -4,6 +4,8 @@
 [![npm downloads](https://img.shields.io/npm/dm/astro-cookie-consent.svg)](https://www.npmjs.com/package/astro-cookie-consent)
 [![license](https://img.shields.io/npm/l/astro-cookie-consent.svg)](./LICENSE)
 
+I love Astro.build and vibe-coding websites but let's make sure that you are actually GDPR compliant.
+
 A tiny, dependency-free, GDPR compliant cookie consent banner and script-gating helper for Astro
 sites.
 
