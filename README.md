@@ -91,6 +91,24 @@ All optional — defaults are in English, override everything to localize.
 | `reopenAriaLabel`  | `"Change cookie preferences"`                                                  | Reopen button `aria-label`.                                               |
 | `categories`       | _(none)_                                                                       | `{ id, label, description?, default? }[]` — enables per-category consent. |
 | `expiryDays`       | `365`                                                                          | Days a stored choice stays valid before the banner reappears.             |
+| `embedded`         | `false`                                                                        | Render inline wherever you place it instead of floating bottom-left.      |
+
+### Embedding it inline
+
+By default `<ConsentBanner />` floats as a fixed bottom-left card and moves itself to `<body>`
+on init (see [Design notes](#design-notes)). Pass `embedded` to render it inline instead —
+useful for a privacy/preferences page, or anywhere else you want it to sit in the page's normal
+layout rather than float:
+
+```astro
+<section class="privacy-settings">
+	<h1>Privacy settings</h1>
+	<ConsentBanner embedded categories={[{ id: 'analytics', label: 'Analytics' }]} />
+</section>
+```
+
+An embedded banner stays exactly where you put it in the markup — no `<body>` reparenting, no
+`position: fixed`, no `z-index`.
 
 ## Theming
 

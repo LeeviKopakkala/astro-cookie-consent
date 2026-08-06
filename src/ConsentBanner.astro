@@ -37,6 +37,11 @@ export interface Props {
 	categories?: ConsentCategory[];
 	/** How long a choice stays valid before the banner is shown again. Defaults to 365. */
 	expiryDays?: number;
+	/** Render inline wherever you place it (e.g. a settings/preferences page)
+	 * instead of floating as a fixed bottom-left card. Skips the `<body>`
+	 * reparenting used to escape ancestor stacking contexts, since an
+	 * intentionally embedded banner has nothing to escape from. */
+	embedded?: boolean;
 }
 
 const {
@@ -52,6 +57,7 @@ const {
 	reopenAriaLabel = 'Change cookie preferences',
 	categories = [],
 	expiryDays = 365,
+	embedded = false,
 } = Astro.props;
 
 const hasCategories = categories.length > 0;
@@ -66,6 +72,7 @@ const categoryIds = categories.map((category) => category.id);
 	hidden
 	data-cc-expiry-days={expiryDays}
 	data-cc-categories={hasCategories ? JSON.stringify(categoryIds) : ''}
+	data-cc-embedded={embedded ? 'true' : undefined}
 >
 	{
 		title && (
@@ -145,6 +152,7 @@ const categoryIds = categories.map((category) => category.id);
 			class="cc-reopen"
 			hidden
 			aria-label={reopenAriaLabel}
+			data-cc-embedded={embedded ? 'true' : undefined}
 		>
 			{reopenLabel}
 		</button>
@@ -159,14 +167,18 @@ const categoryIds = categories.map((category) => category.id);
 		const reopenBtn = document.getElementById('cookie-consent-reopen');
 		if (!banner) return;
 
-		// A consent banner must always be reachable — but `position: fixed` is
-		// trapped by any ancestor with `isolation`, `transform`, `filter`, or
-		// `will-change` (common in real layouts, e.g. Tailwind's `isolate`
-		// utility), which silently breaks its stacking regardless of z-index.
-		// Moving it to be a direct child of <body> sidesteps that entirely.
-		if (banner.parentElement !== document.body) document.body.appendChild(banner);
-		if (reopenBtn && reopenBtn.parentElement !== document.body) {
-			document.body.appendChild(reopenBtn);
+		// A floating consent banner must always be reachable — but
+		// `position: fixed` is trapped by any ancestor with `isolation`,
+		// `transform`, `filter`, or `will-change` (common in real layouts, e.g.
+		// Tailwind's `isolate` utility), which silently breaks its stacking
+		// regardless of z-index. Moving it to be a direct child of <body>
+		// sidesteps that entirely. Skipped for `embedded` banners, which are
+		// deliberately placed inline and have nothing to escape from.
+		if (banner.dataset.ccEmbedded !== 'true') {
+			if (banner.parentElement !== document.body) document.body.appendChild(banner);
+			if (reopenBtn && reopenBtn.parentElement !== document.body) {
+				document.body.appendChild(reopenBtn);
+			}
 		}
 
 		const expiryDays = Number(banner.dataset.ccExpiryDays) || 365;
@@ -522,5 +534,24 @@ const categoryIds = categories.map((category) => category.id);
 			max-width: none;
 			padding: 1.25rem;
 		}
+	}
+
+	/* embedded: render inline wherever placed instead of floating. Specificity
+	   (class + attribute) beats the base .cc-banner/.cc-reopen rules on its
+	   own, no !important needed. */
+	.cc-banner[data-cc-embedded] {
+		position: static;
+		left: auto;
+		bottom: auto;
+		z-index: auto;
+		max-width: none;
+		width: 100%;
+	}
+
+	.cc-reopen[data-cc-embedded] {
+		position: static;
+		left: auto;
+		bottom: auto;
+		z-index: auto;
 	}
 </style>

@@ -37,6 +37,19 @@ Pass `title=""` to omit the heading entirely.
 
 All props are optional; only pass the ones being changed. Defaults are in English.
 
+## Embedding it inline instead of floating
+
+By default the banner floats as a fixed bottom-left card (and moves itself to `<body>` on init
+— see Guardrails). If asked to put it inside a specific page section instead — a privacy
+settings page is the usual case — pass `embedded`, don't fight the fixed positioning with CSS:
+
+```astro
+<ConsentBanner embedded categories={[{ id: 'analytics', label: 'Analytics' }]} />
+```
+
+This renders it inline wherever it's placed, skips the `<body>` reparenting, and drops
+`position: fixed`/`z-index` entirely.
+
 ## Adding per-category consent (analytics/marketing/etc.)
 
 Pass `categories` — this switches the banner from a single accept/decline into a checklist
@@ -145,7 +158,9 @@ whenAccepted(() => {
   any ancestor with `isolation`/`transform`/`filter`/`will-change` that would otherwise trap its
   `position: fixed` stacking regardless of `z-index` (e.g. Tailwind's `isolate` utility, or a
   page-transition wrapper). If asked "why does the banner end up at the end of `<body>`", explain
-  this rather than treating it as a placement bug.
+  this rather than treating it as a placement bug. If the actual request is "make it stay in
+  this specific spot on the page" (e.g. a settings page), that's the `embedded` prop, not a bug
+  to route around with CSS.
 - **Layout/spacing changes aren't exposed as CSS variables on purpose** — the 7 `--cc-*`
   variables are the supported customization surface. If a request needs more (e.g. banner
   docked to the top instead of bottom-left, a completely different layout), the correct fix is
