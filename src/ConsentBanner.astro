@@ -463,13 +463,16 @@ const categoryIds = categories.map((category) => category.id);
 	}
 
 	.cc-actions {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 		gap: 0.6rem;
-		flex-wrap: wrap;
 	}
 
 	.cc-actions button {
-		flex: 1;
+		/* Grid's default row-stretch reliably equalizes button heights even
+		   when one label wraps to two lines and its siblings don't — flex's
+		   `flex: 1` (flex-basis: 0%) + wrapping text is a known combination
+		   that can produce mismatched heights depending on container width. */
 		font: inherit;
 		font-size: 0.85rem;
 		font-weight: 600;
