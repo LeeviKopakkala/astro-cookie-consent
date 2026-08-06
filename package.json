@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"description": "A tiny, dependency-free cookie consent banner and script-gating helper for Astro sites.",
 	"type": "module",
+	"types": "./src/index.d.ts",
 	"license": "MIT",
 	"author": "Leevi Kopakkala",
 	"homepage": "https://github.com/LeeviKopakkala/astro-cookie-consent",
@@ -40,11 +41,14 @@
 		"build": "npm run build --workspace examples/basic",
 		"check": "npm run check --workspace examples/basic",
 		"format": "prettier --write .",
-		"format:check": "prettier --check ."
+		"format:check": "prettier --check .",
+		"test": "vitest run"
 	},
 	"devDependencies": {
+		"happy-dom": "^20.11.1",
 		"prettier": "^3.9.6",
-		"prettier-plugin-astro": "^0.14.1"
+		"prettier-plugin-astro": "^0.14.1",
+		"vitest": "^4.1.10"
 	},
 	"workspaces": [
 		"examples/basic"
