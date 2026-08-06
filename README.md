@@ -1,5 +1,9 @@
 # astro-cookie-consent
 
+[![npm version](https://img.shields.io/npm/v/astro-cookie-consent.svg)](https://www.npmjs.com/package/astro-cookie-consent)
+[![npm downloads](https://img.shields.io/npm/dm/astro-cookie-consent.svg)](https://www.npmjs.com/package/astro-cookie-consent)
+[![license](https://img.shields.io/npm/l/astro-cookie-consent.svg)](./LICENSE)
+
 A tiny, dependency-free cookie consent banner and script-gating helper for Astro sites.
 
 **[Docs & live demo → astro-cookie-consent.dev](https://astro-cookie-consent.dev)**
