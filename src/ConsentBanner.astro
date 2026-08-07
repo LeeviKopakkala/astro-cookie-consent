@@ -324,11 +324,21 @@ const categoryIds = categories.map((category) => category.id);
 	}
 
 	.cc-banner {
+		/* container queries need this for the @container rule below, but it
+		   comes with a sharp edge: layout containment stops an element from
+		   resolving an `auto` inline size at all while floating — not just
+		   the shrink-to-fit case, but also the left+right-solves-width case
+		   the @media block below used to rely on — collapsing it to ~0
+		   instead. Every width on this element must be a fully explicit
+		   value (never `auto`) as a result; see the @media block below too. */
+		container-type: inline-size;
+		container-name: cc-banner;
+		text-align: left;
 		position: fixed;
 		left: 1rem;
 		bottom: 1rem;
 		z-index: 9999;
-		max-width: 400px;
+		width: min(400px, calc(100% - 2rem));
 		background-color: var(--cc-bg, var(--cc-default-bg));
 		color: var(--cc-fg, var(--cc-default-fg));
 		border: 1px solid var(--cc-border, var(--cc-default-border));
@@ -468,11 +478,31 @@ const categoryIds = categories.map((category) => category.id);
 		gap: 0.6rem;
 	}
 
+	/* Below this, 2-3 buttons packed into equal-width columns no longer have
+	   room for their labels — auto-fit would otherwise wedge into an
+	   ambiguous partial-row state (e.g. 2 columns with the 3rd item alone on
+	   its own row) or overflow the container outright. Stack instead. A
+	   container query (keyed to the banner's own rendered width, not the
+	   viewport) is required here because this banner is very commonly
+	   embedded at a fixed width inside a wider page. */
+	@container cc-banner (max-width: 330px) {
+		.cc-actions {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	.cc-actions button {
-		/* Grid's default row-stretch reliably equalizes button heights even
-		   when one label wraps to two lines and its siblings don't — flex's
-		   `flex: 1` (flex-basis: 0%) + wrapping text is a known combination
-		   that can produce mismatched heights depending on container width. */
+		/* Grid's default row-stretch equalizes button heights even when one
+		   label wraps to two lines and its siblings don't — but WebKit
+		   doesn't apply the inherited `normal` -> `stretch` resolution to
+		   <button> grid items, so it must be set explicitly here to also
+		   work in Safari (desktop and iOS).
+		   NOTE: there's still an open, unresolved bug where a single-line
+		   button in this layout can come out taller than a two-line sibling
+		   on some (but not all) Chrome configurations, backwards from what
+		   content alone would produce — neither switching to flexbox nor
+		   adding an explicit min-height fixed it. Needs more investigation. */
+		align-self: stretch;
 		font: inherit;
 		font-size: 0.85rem;
 		font-weight: 600;
@@ -532,9 +562,18 @@ const categoryIds = categories.map((category) => category.id);
 	@media (max-width: 640px) {
 		.cc-banner {
 			left: 0.5rem;
-			right: 0.5rem;
 			bottom: 0.5rem;
-			max-width: none;
+			/* Deliberately not redeclared here: this must stay the exact same
+			   expression as the base rule's `width` above, not some smaller
+			   mobile-tuned reservation. Consuming sites commonly reposition
+			   this banner by overriding `left`/`right` with `!important` (the
+			   Theming guide documents it, and this repo's own LiveDemo /
+			   ThemeGallery pages both do it to dock right instead of left) —
+			   they only ever touch the inset properties, never `width`. If
+			   this reserved a *different* margin than the base rule, a
+			   consumer's overridden `right` and this `width` would jointly
+			   over-determine the box and force `left` to solve out to 0,
+			   pinning it flush to the edge instead of leaving it a margin. */
 			padding: 1.25rem;
 		}
 	}

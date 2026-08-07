@@ -1,6 +1,6 @@
 {
 	"name": "astro-cookie-consent",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A tiny, dependency-free, GDPR compliant cookie consent banner and script-gating helper for Astro sites.",
 	"type": "module",
 	"types": "./src/index.d.ts",
