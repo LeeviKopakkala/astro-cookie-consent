@@ -13,7 +13,8 @@ sites.
 
 **[Docs & live demo → astro-cookie-consent.dev](https://astro-cookie-consent.dev)**
 
-![Screenshot of the ConsentBanner component, showing per-category Analytics/Marketing toggles with equal-prominence Decline all / Save preferences / Accept all buttons](.github/images/screenshot.png)
+<img width="376" height="540" alt="image" src="https://github.com/user-attachments/assets/3387de9c-6b0e-472a-b63a-7619f096e343" />
+
 
 - No dependencies, no build step — ships as plain `.astro`/`.js` source, compiled by your own project's Astro pipeline.
 - Blocks third-party scripts until the visitor actually accepts (not just an informational banner).
