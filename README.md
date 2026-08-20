@@ -15,7 +15,6 @@ sites.
 
 <img width="376" height="540" alt="image" src="https://github.com/user-attachments/assets/3387de9c-6b0e-472a-b63a-7619f096e343" />
 
-
 - No dependencies, no build step — ships as plain `.astro`/`.js` source, compiled by your own project's Astro pipeline.
 - Blocks third-party scripts until the visitor actually accepts (not just an informational banner).
 - Optional per-category consent (e.g. analytics/marketing), or a single accept/decline if you don't need that.
