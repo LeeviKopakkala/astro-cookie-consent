@@ -3,6 +3,11 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.3
+
+- Bumped `fast-uri` (transitive dev dependency) from 3.1.5 to 3.1.7 to resolve high-severity
+  security advisories. No changes to package code or the public API.
+
 ## 0.1.1
 
 - Fixed `<ConsentBanner />` buttons not stretching to equal height in Safari (desktop and iOS)
