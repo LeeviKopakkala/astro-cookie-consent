@@ -3,6 +3,11 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.4
+
+- Bumped `svgo` (transitive dev dependency) from 4.0.2 to 4.1.0, which includes security
+  hardening for `removeScripts`. No changes to package code or the public API.
+
 ## 0.1.3
 
 - Bumped `fast-uri` (transitive dev dependency) from 3.1.5 to 3.1.7 to resolve high-severity
