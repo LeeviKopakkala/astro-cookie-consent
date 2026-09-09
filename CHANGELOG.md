@@ -3,6 +3,17 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.5
+
+- Bumped `astro` (example app dependency) from 7.2.4 to 7.3.2, fixing a critical remote code
+  execution vulnerability in AVIF image optimization ([GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)).
+- Bumped `sharp` (transitive dependency) from 0.35.3 to 0.35.4, fixing high-severity `libheif`
+  vulnerabilities.
+- Bumped `js-yaml` (transitive dependency) from 4.3.1 to 4.3.2, fixing a high-severity denial of
+  service issue.
+- Bumped `vitest`/`@vitest/mocker` (dev dependencies) to fix a moderate-severity path traversal
+  issue. No changes to package code or the public API.
+
 ## 0.1.4
 
 - Bumped `svgo` (transitive dev dependency) from 4.0.2 to 4.1.0, which includes security
