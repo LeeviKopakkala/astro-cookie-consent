@@ -3,6 +3,12 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.6
+
+- Bumped `devalue` (transitive dependency) from 5.9.0 to 5.9.2, fixing a medium-severity denial
+  of service issue via malformed input ([GHSA-9rgm-9g3h-6x36](https://github.com/advisories/GHSA-9rgm-9g3h-6x36)).
+  No changes to package code or the public API.
+
 ## 0.1.5
 
 - Bumped `astro` (example app dependency) from 7.2.4 to 7.3.2, fixing a critical remote code
