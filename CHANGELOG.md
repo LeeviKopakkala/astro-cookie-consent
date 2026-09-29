@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.7
+
+- Bumped `undici` (transitive dependency via `astro`) from 8.10.0 to 8.11.2, fixing a
+  medium-severity denial of service issue in WebSocket permessage-deflate decompression
+  ([GHSA-3wwx-pv8p-q78v](https://github.com/advisories/GHSA-3wwx-pv8p-q78v)).
+  No changes to package code or the public API.
+
 ## 0.1.6
 
 - Bumped `devalue` (transitive dependency) from 5.9.0 to 5.9.2, fixing a medium-severity denial
