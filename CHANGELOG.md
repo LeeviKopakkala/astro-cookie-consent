@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.8
+
+- Bumped `devalue` (transitive dependency) from 5.9.2 to 5.9.4, fixing a high-severity issue where
+  `stringifyAsync` could cause an unhandled rejection ([GHSA-x5rw-q4pp-hg5g](https://github.com/advisories/GHSA-x5rw-q4pp-hg5g)).
+- Bumped `http-cache-semantics` (transitive dependency) from 4.2.0 to 4.3.0, fixing a high-severity
+  issue where `max-stale` handling could disclose cross-user cached responses ([GHSA-ch52-4w7c-c8xp](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)).
+  No changes to package code or the public API.
+
 ## 0.1.7
 
 - Bumped `undici` (transitive dependency via `astro`) from 8.10.0 to 8.11.2, fixing a
