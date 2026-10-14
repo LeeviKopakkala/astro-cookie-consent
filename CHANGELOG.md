@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.9
+
+- Bumped `sharp` (transitive dependency) from 0.35.4 to 0.35.5, fixing a high-severity
+  vulnerability in its bundled `librsvg` ([GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w)).
+- Bumped `source-map-js` (transitive dependency) from 1.2.1 to 1.2.2, fixing a high-severity
+  event-loop denial of service issue ([GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q)).
+- Bumped `smol-toml` (transitive dependency) from 1.8.0 to 1.9.1, fixing a moderate-severity
+  quadratic-time parsing issue ([GHSA-r4xh-jqrq-34v2](https://github.com/advisories/GHSA-r4xh-jqrq-34v2)).
+- Bumped `fast-uri` (transitive example app dev dependency) from 3.1.7 to 3.1.8, fixing a
+  moderate-severity host normalization issue ([GHSA-hrr3-gc8f-f4qj](https://github.com/advisories/GHSA-hrr3-gc8f-f4qj)).
+  No changes to package code or the public API.
+
 ## 0.1.8
 
 - Bumped `devalue` (transitive dependency) from 5.9.2 to 5.9.4, fixing a high-severity issue where
