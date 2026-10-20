@@ -45,10 +45,10 @@
 		"test": "vitest run"
 	},
 	"devDependencies": {
-		"happy-dom": "^20.11.1",
-		"prettier": "^3.9.6",
+		"happy-dom": "^20.14.6",
+		"prettier": "^3.9.10",
 		"prettier-plugin-astro": "^0.14.1",
-		"vitest": "^4.1.10"
+		"vitest": "^4.1.12"
 	},
 	"workspaces": [
 		"examples/basic"

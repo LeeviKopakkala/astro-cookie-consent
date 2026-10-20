@@ -10,11 +10,11 @@
 		"check": "astro check"
 	},
 	"dependencies": {
-		"astro": "^7.3.2",
+		"astro": "^7.4.1",
 		"astro-cookie-consent": "file:../.."
 	},
 	"devDependencies": {
-		"@astrojs/check": "^0.9.10",
+		"@astrojs/check": "^0.9.11",
 		"typescript": "^6.0.3"
 	}
 }
