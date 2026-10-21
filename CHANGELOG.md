@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 1.0.0
+
+- Added `<ConsentMode />` (`astro-cookie-consent/ConsentMode.astro`), which sends the visitor's
+  choice to Google tags as Consent Mode v2 signals (`ad_storage`, `ad_user_data`,
+  `ad_personalization`, `analytics_storage`). Place it in `<head>` before any Google snippet and
+  map your banner categories to consent types with the `mapping` prop.
+- Added `ConsentModeType` and `ConsentModeMapping` types.
+
 ## 0.1.9
 
 - Bumped `sharp` (transitive dependency) from 0.35.4 to 0.35.5, fixing a high-severity

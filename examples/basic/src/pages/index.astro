@@ -14,6 +14,13 @@ import Layout from '../layouts/Layout.astro';
 
 	<p id="demo-status">Waiting for consent…</p>
 
+	<h2>Google Consent Mode</h2>
+	<p>
+		<code>&lt;ConsentMode /&gt;</code> in the layout's <code>&lt;head&gt;</code> forwards the choice to
+		Google tags. The consent commands it has pushed to <code>dataLayer</code>:
+	</p>
+	<pre id="consent-mode-log"></pre>
+
 	<h2 id="privacy">Example privacy note</h2>
 	<p>This is just a demo anchor target for the banner's "learn more" link.</p>
 
@@ -32,6 +39,20 @@ import Layout from '../layouts/Layout.astro';
 		};
 
 		render(getConsent('analytics'));
+
+		const log = document.getElementById('consent-mode-log');
+		const renderLog = () => {
+			if (!log) return;
+			const entries = ((window as any).dataLayer ?? []).map((entry: IArguments) =>
+				Array.from(entry),
+			);
+			log.textContent = entries
+				.filter(([command]: unknown[]) => command === 'consent')
+				.map(([, action, state]: unknown[]) => `${action} ${JSON.stringify(state, null, 1)}`)
+				.join('\n\n');
+		};
+		renderLog();
+		onConsentChange(() => renderLog());
 		onConsentChange((record: ConsentRecord) => {
 			if ('analytics' in record.categories)
 				render(record.categories.analytics ? 'accept' : 'decline');

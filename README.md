@@ -7,6 +7,7 @@
 I love Astro.build and vibe-coding websites but let's make sure that you are actually GDPR compliant.
 
 - This package also ships with a SKILL.md file for all your AI needs! :)
+- Google Consent Mode V2 now supported! See [Google Consent Mode v2](#google-consent-mode-v2).
 
 A tiny, dependency-free, GDPR compliant cookie consent banner and script-gating helper for Astro
 sites.
@@ -22,6 +23,7 @@ sites.
 - Choices expire after `expiryDays` (default 365) and the banner is shown again — no permanent silent consent.
 - The stored record includes a timestamp, so you have something to point to if you ever need to demonstrate consent was given.
 - Choice persists in `localStorage` and is broadcast via a `CustomEvent`, so any part of your site can react to it.
+- Google Consent Mode v2 support via `<ConsentMode />`, for GA4, Google Ads and GTM.
 - Themeable via CSS custom properties, all copy is prop-driven (no hardcoded language).
 
 ## Install
@@ -85,6 +87,71 @@ gateScript({ src: 'https://example.com/analytics.js', category: 'analytics' });
 
 `getConsent()`, `whenAccepted()`, and `setConsent()` all take the same `category` argument —
 see the JS API below.
+
+## Google Consent Mode v2
+
+`<ConsentMode />` sends the visitor's choice to Google tags (GA4, Google Ads, Google Tag Manager)
+as [Consent Mode v2](https://developers.google.com/tag-platform/security/guides/consent) signals:
+an all-`denied` default before any Google tag runs, then a `consent update` whenever the visitor
+chooses (and on every later page load once they have). All four v2 types are covered —
+`ad_storage`, `ad_user_data`, `ad_personalization` and `analytics_storage`.
+
+Put it in `<head>`, **above** any Google snippet — Consent Mode requires the default to be set
+first, which is why this is a separate component instead of part of `<ConsentBanner />`:
+
+```astro
+---
+import ConsentMode from 'astro-cookie-consent/ConsentMode.astro';
+---
+
+<head>
+	<ConsentMode
+		mapping={{
+			analytics: ['analytics_storage'],
+			marketing: ['ad_storage', 'ad_user_data', 'ad_personalization'],
+		}}
+	/>
+	<!-- Google snippet goes after this -->
+</head>
+```
+
+`mapping` maps your banner's category ids to the Consent Mode types they grant. A type is
+`granted` if any accepted category maps to it, otherwise `denied`. Without `categories` on the
+banner, leave `mapping` out — the default makes the single accept/decline control all four types.
+
+**Basic mode (recommended):** load the Google tag only after consent, so nothing reaches Google
+before the visitor accepts:
+
+```astro
+<script is:inline>
+	gtag('js', new Date());
+	gtag('config', 'G-XXXXXXX');
+</script>
+<script>
+	import { gateScript } from 'astro-cookie-consent';
+	gateScript({
+		src: 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX',
+		category: 'analytics',
+	});
+</script>
+```
+
+(`<ConsentMode />` defines `window.gtag`, so the queued `js`/`config` calls are picked up when
+gtag.js loads.)
+
+**Advanced mode:** load Google's standard snippet (or GTM's) ungated after `<ConsentMode />`.
+Google tags then send cookieless pings while consent is denied. This lets Google model more data,
+but sends requests to Google before consent — check that it fits your legal basis. GTM reads the
+same `dataLayer`, so its built-in consent checks work with either mode.
+
+| Prop               | Default                  | Description                                                              |
+| ------------------ | ------------------------ | ------------------------------------------------------------------------ |
+| `mapping`          | `{ all: [all 4 types] }` | Category id → Consent Mode types it grants.                              |
+| `expiryDays`       | `365`                    | **Must match** `<ConsentBanner expiryDays>`.                             |
+| `waitForUpdate`    | `500`                    | Milliseconds Google tags wait for an update before firing.               |
+| `adsDataRedaction` | `false`                  | Redact ad click identifiers while `ad_storage` is denied.                |
+| `urlPassthrough`   | `false`                  | Pass ad click info through URLs while cookies are denied.                |
+| `region`           | _(everywhere)_           | ISO 3166-2 codes the denied default applies to, e.g. EEA countries only. |
 
 ## `<ConsentBanner />` props
 

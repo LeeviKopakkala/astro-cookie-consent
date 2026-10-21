@@ -1,6 +1,6 @@
 ---
 name: astro-cookie-consent
-description: Use when customizing the astro-cookie-consent package in this project — changing the ConsentBanner's text/labels, changing its colors/theme via CSS variables, gating a new third-party script behind consent with gateScript(), or reading/reacting to consent state via consent.js. Triggers on requests like "change the cookie banner text", "change the consent banner colors", "gate this script behind cookie consent", "add a privacy link to the banner".
+description: Use when customizing the astro-cookie-consent package in this project — changing the ConsentBanner's text/labels, changing its colors/theme via CSS variables, gating a new third-party script behind consent with gateScript(), reading/reacting to consent state via consent.js, or connecting Google tags with ConsentMode (Google Consent Mode v2). Triggers on requests like "change the cookie banner text", "change the consent banner colors", "gate this script behind cookie consent", "add a privacy link to the banner", "add Google Analytics with consent mode".
 ---
 
 # astro-cookie-consent
@@ -11,7 +11,8 @@ almost never need to edit those files directly — see "Guardrails" below).
 
 It provides: a `<ConsentBanner />` Astro component (the visible banner + a "reopen" pill),
 a small consent-state module (`consent.js`), and a helper for gating third-party scripts
-behind consent (`gateScript.js`). Full reference: `node_modules/astro-cookie-consent/README.md`.
+behind consent (`gateScript.js`), and a `<ConsentMode />` component that forwards the choice
+to Google tags as Consent Mode v2 signals. Full reference: `node_modules/astro-cookie-consent/README.md`.
 
 ## Changing the banner's text
 
@@ -114,6 +115,30 @@ Use this for any new tracker/embed/widget script being added — never add a bar
 project's `<ConsentBanner>` uses `categories`, pass the matching one: `gateScript({ src: '...',
 category: 'analytics' })`. If it doesn't (plain accept/decline), omit `category` — it defaults
 to `'all'`, the implicit category the banner uses in that mode.
+
+## Connecting Google tags (Consent Mode v2)
+
+If the project uses GA4, Google Ads or Google Tag Manager, render `<ConsentMode />` in `<head>`
+**before** any Google snippet, with `mapping` matching the banner's category ids:
+
+```astro
+---
+import ConsentMode from 'astro-cookie-consent/ConsentMode.astro';
+---
+
+<ConsentMode
+	mapping={{
+		analytics: ['analytics_storage'],
+		marketing: ['ad_storage', 'ad_user_data', 'ad_personalization'],
+	}}
+/>
+```
+
+Omit `mapping` if the banner has no `categories`. Keep `expiryDays` the same as on
+`<ConsentBanner>`. Prefer loading gtag.js through `gateScript()` (basic mode) over an ungated
+snippet; only load it ungated (advanced mode) if the user explicitly asks, and mention that it
+contacts Google before consent. Never move `<ConsentMode />` below a Google snippet or into
+`<body>` — the default must be set first.
 
 ## Reading or reacting to consent state elsewhere
 

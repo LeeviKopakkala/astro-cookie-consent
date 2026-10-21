@@ -1,0 +1,39 @@
+---
+import { initConsentMode } from './consentMode.js';
+import type { ConsentModeMapping } from './index.js';
+
+export interface Props {
+	/** Category id to the Consent Mode types it grants. Defaults to the
+	 * implicit `all` category (plain accept/decline banner) granting all four
+	 * v2 types. Types not granted by any accepted category stay `denied`. */
+	mapping?: ConsentModeMapping;
+	/** Must match `<ConsentBanner expiryDays>`. Defaults to 365. */
+	expiryDays?: number;
+	/** Milliseconds Google tags wait for a consent update before firing. Defaults to 500. */
+	waitForUpdate?: number;
+	/** Redact ad click identifiers while `ad_storage` is denied. */
+	adsDataRedaction?: boolean;
+	/** Pass ad click info through URLs while cookies are denied. */
+	urlPassthrough?: boolean;
+	/** ISO 3166-2 region codes the denied default applies to, e.g. EEA countries.
+	 * Omit to apply it everywhere. */
+	region?: string[];
+}
+
+const {
+	mapping = {
+		all: ['ad_storage', 'ad_user_data', 'ad_personalization', 'analytics_storage'],
+	},
+	expiryDays = 365,
+	waitForUpdate = 500,
+	adsDataRedaction = false,
+	urlPassthrough = false,
+	region,
+} = Astro.props;
+
+const config = { mapping, expiryDays, waitForUpdate, adsDataRedaction, urlPassthrough, region };
+// Escape `<` so a stray `</script>` in a prop can't break out of the tag.
+const code = `(${initConsentMode.toString()})(${JSON.stringify(config).replace(/</g, '\\u003c')});`;
+---
+
+<script is:inline set:html={code} />

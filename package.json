@@ -1,6 +1,6 @@
 {
 	"name": "astro-cookie-consent",
-	"version": "0.1.9",
+	"version": "1.0.0",
 	"description": "A tiny, dependency-free, GDPR compliant cookie consent banner and script-gating helper for Astro sites.",
 	"type": "module",
 	"types": "./src/index.d.ts",
@@ -17,7 +17,9 @@
 		"cookie-consent",
 		"gdpr",
 		"privacy",
-		"cookies"
+		"cookies",
+		"consent-mode",
+		"google-consent-mode"
 	],
 	"files": [
 		"src",
@@ -29,6 +31,7 @@
 			"default": "./src/index.js"
 		},
 		"./ConsentBanner.astro": "./src/ConsentBanner.astro",
+		"./ConsentMode.astro": "./src/ConsentMode.astro",
 		"./consent.js": "./src/consent.js",
 		"./gateScript.js": "./src/gateScript.js",
 		"./package.json": "./package.json"

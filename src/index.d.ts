@@ -23,3 +23,14 @@ export interface GateScriptOptions {
 	category?: string;
 }
 export function gateScript(options: GateScriptOptions): void;
+
+export type ConsentModeType =
+	| 'ad_storage'
+	| 'ad_user_data'
+	| 'ad_personalization'
+	| 'analytics_storage'
+	| 'functionality_storage'
+	| 'personalization_storage'
+	| 'security_storage';
+/** Category id to the Google Consent Mode types it grants, for `<ConsentMode mapping>`. */
+export type ConsentModeMapping = Record<string, ConsentModeType[]>;
