@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 1.0.1
+
+- Bumped `happy-dom` (dev dependency, used by the test suite) from 20.14.6 to 21.0.4, fixing a
+  high-severity host code execution issue via an unsanitized import alias
+  ([GHSA-834v-8h66-3h79](https://github.com/advisories/GHSA-834v-8h66-3h79)).
+  No changes to package code or the public API.
+
 ## 1.0.0
 
 - Added `<ConsentMode />` (`astro-cookie-consent/ConsentMode.astro`), which sends the visitor's
