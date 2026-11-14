@@ -10,7 +10,7 @@
 		"check": "astro check"
 	},
 	"dependencies": {
-		"astro": "^7.4.1",
+		"astro": "^7.4.12",
 		"astro-cookie-consent": "file:../.."
 	},
 	"devDependencies": {
